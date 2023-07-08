@@ -12,22 +12,24 @@ def partFind(pc, points, ev, init):
         for r in range(1, 4):
             sphereGen3(r, newPC, points, ev)
     else:
+        ev = []
+        points = {}
         for core in pc:
             points[core] = 1
             for r in range(1, 4):
                 sphereGen3(r, core, points, ev)
 
     minval, foundPC, hold = minfind(points,ev)
-    TfoundPC = list(foundPC)
+    # TfoundPC = list(foundPC)
     if minval != 0:
-        print(minval, foundPC, pc, 'c')
+
 
         for p in hold:
             pc.append(p)
             newpcList = pc.copy()
             print(minval, foundPC, newpcList, 'c')
             pc.pop(-1)
-            partFind(newpcList, points, ev, False)
+            partFind(newpcList, points, ev, True)
 
 
 
@@ -46,6 +48,48 @@ def partFind(pc, points, ev, init):
     else:
         pc.append(foundPC)
         print(minval, foundPC, pc, 'x')
+        pc.pop(-1)
+
+
+def partFind2(pc, points, ev, init, configList, configFlag):
+    if not init:
+        newPC = pc[-1]
+        points[newPC] = 1
+        for r in range(1, 4):
+            sphereGen3(r, newPC, points, ev)
+    else:
+        points = {}
+        ev = []
+        for core in pc:
+            points[core] = 1
+            for r in range(1, 4):
+                sphereGen3(r, core, points, ev)
+
+    minval, foundPC, hold = minfind(points, ev)
+
+    if minval != 0:
+        # print(pc, 'c')
+
+
+
+
+        for p in hold:
+            pc.append(p)
+            newpcList = pc.copy()
+            print(minval, foundPC, pc, 'c')
+            if configFlag:
+                configList.append([pc, False])
+            pc.pop(-1)
+            partFind2(newpcList, points, ev, True, configList, configFlag)
+
+    else:
+        pc.append(foundPC)
+        print(minval, foundPC, pc, 'x')
+        if configFlag:
+            print(pc)
+            configList.append([pc.copy(), True])
+            print(configList[-1])
+        pc.pop(-1)
 
 
 
@@ -112,7 +156,11 @@ def place(pc, r, offset, points, ev):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print("hi")
-    partFind([(0, 0, 0), (-3, 0, 0)], {}, [], True)
+    testing = []
+    # partFind([(0, 0, 0), (-3, 0, 0)], {}, [], True)
+    partFind2([(0, 0, 0), (-3, 0, 0)], {}, [], True, testing, True)
+    print()
+    for i in range(len(testing)):
+        print(i, testing[i])
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
